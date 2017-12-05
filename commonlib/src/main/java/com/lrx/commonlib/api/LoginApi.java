@@ -10,12 +10,13 @@ import com.lrx.commonlib.api.error.ErrorLoginApi;
 
 public abstract class LoginApi extends BaseApi{
     private static LoginApi instance = null;
-    protected static String CLASS_NAME = "com.lrx.loginlib.LoginApiImp2";
+    protected static String CLASS_NAME = "com.lrx.loginlib.LoginApiImp";
 
     public abstract String absLoginByGuest(String userName);
     public abstract void absLoginOut();
 
     private static class LoginApiHolder {
+        private static LoginApi INSTANCE = init(CLASS_NAME);
         private static LoginApi init(String className) {
             LoginApi result = InstanceHolder.init(className,LoginApi.class);
             if(result == null) {
@@ -26,27 +27,14 @@ public abstract class LoginApi extends BaseApi{
     }
 
     public static LoginApi getInstance() {
-        if(instance == null) {
-            instance = LoginApiHolder.init(CLASS_NAME);
-        }
-        return instance;
+        return LoginApiHolder.INSTANCE;
     }
 
     public String loginByGuest(String userName) {
-        if(checkInstanceIsError()) return null;
         return absLoginByGuest(userName);
     }
 
     public void loginOut() {
-        if(checkInstanceIsError()) return;
         absLoginOut();
-    }
-
-    private boolean checkInstanceIsError() {
-        if(instance instanceof ErrorLoginApi) {
-            Log.e("yy","intance is ErrorLoginApi");
-            return true;
-        }
-        return false;
     }
 }
