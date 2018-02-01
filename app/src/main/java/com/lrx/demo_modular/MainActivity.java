@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.lrx.commonlib.RouterManager;
 import com.lrx.commonlib.router.LoginRouter;
 
 public class MainActivity extends AppCompatActivity {

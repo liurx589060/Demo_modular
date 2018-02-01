@@ -8,7 +8,11 @@ import com.lrx.commonlib.LogUtil;
  */
 
 public class Router {
-    public static <T> T create(final String impClassName,Class<T> impClass) {
+    private String impClassName;
+    protected boolean isCreatedSuccess;
+
+    protected <T> T create(final String impClassName,Class<T> impClass) {
+        this.impClassName = impClassName;
         T result = null;
         if(isClassPresent(impClassName)) {
             try{
@@ -30,5 +34,12 @@ public class Router {
             LogUtil.e(e.toString());
             return false;
         }
+    }
+
+    protected String getImpClassName() throws RouterException {
+        if(impClassName == null) {
+            throw new RouterException("Router to create impClass excepiton");
+        }
+        return impClassName;
     }
 }
