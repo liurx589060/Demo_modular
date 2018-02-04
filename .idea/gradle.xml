@@ -8,9 +8,11 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/Routerlib" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/commonlib" />
-            <option value="$PROJECT_DIR$/loginlib" />
+            <option value="$PROJECT_DIR$/extralib" />
+            <option value="$PROJECT_DIR$/extratest.module" />
+            <option value="$PROJECT_DIR$/login.module" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

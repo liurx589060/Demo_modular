@@ -1,1 +1,1 @@
-include ':app', ':commonlib', ':loginlib'
+include ':app', ':Routerlib', ':login.module', ':extratest.module', ':extralib'

@@ -3,16 +3,14 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Demo_modular.iml" filepath="$PROJECT_DIR$/Demo_modular.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Demo_modular.iml" filepath="$PROJECT_DIR$/Demo_modular.iml" />
       <module fileurl="file://E:/working_daven/AS_workspace/Demo_modular/Demo_modular.iml" filepath="E:/working_daven/AS_workspace/Demo_modular/Demo_modular.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Routerlib/Routerlib.iml" filepath="$PROJECT_DIR$/Routerlib/Routerlib.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://E:/working_daven/AS_workspace/Demo_modular/app/app.iml" filepath="E:/working_daven/AS_workspace/Demo_modular/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/commonlib/commonlib.iml" filepath="$PROJECT_DIR$/commonlib/commonlib.iml" />
-      <module fileurl="file://$PROJECT_DIR$/commonlib/commonlib.iml" filepath="$PROJECT_DIR$/commonlib/commonlib.iml" />
       <module fileurl="file://E:/working_daven/AS_workspace/Demo_modular/commonlib/commonlib.iml" filepath="E:/working_daven/AS_workspace/Demo_modular/commonlib/commonlib.iml" />
-      <module fileurl="file://$PROJECT_DIR$/loginlib/loginlib.iml" filepath="$PROJECT_DIR$/loginlib/loginlib.iml" />
-      <module fileurl="file://$PROJECT_DIR$/loginlib/loginlib.iml" filepath="$PROJECT_DIR$/loginlib/loginlib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/extralib/extralib.iml" filepath="$PROJECT_DIR$/extralib/extralib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/extratest.module/extratest.module.iml" filepath="$PROJECT_DIR$/extratest.module/extratest.module.iml" />
+      <module fileurl="file://$PROJECT_DIR$/login.module/login.module.iml" filepath="$PROJECT_DIR$/login.module/login.module.iml" />
       <module fileurl="file://E:/working_daven/AS_workspace/Demo_modular/loginlib/loginlib.iml" filepath="E:/working_daven/AS_workspace/Demo_modular/loginlib/loginlib.iml" />
     </modules>
   </component>
