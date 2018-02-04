@@ -1,4 +1,4 @@
-package com.lrx.lib.utils;
+package com.lrx.router.lib.utils;
 
 import android.util.Log;
 

@@ -1,8 +1,8 @@
 package com.lrx.demo_modular;
 
 import com.lrx.extralib.RouterSDK;
-import com.lrx.lib.core.RouterManager;
 import com.lrx.extralib.test.ExtraRouter;
+import com.lrx.router.lib.core.RouterManager;
 
 /**
  * Created by Administrator on 2018/2/4.

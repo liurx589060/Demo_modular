@@ -1,4 +1,4 @@
-package com.lrx.lib.core;
+package com.lrx.router.lib.core;
 
 /**
  * Created by Administrator on 2018/2/1.

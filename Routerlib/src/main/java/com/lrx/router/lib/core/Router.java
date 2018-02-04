@@ -1,7 +1,7 @@
-package com.lrx.lib.core;
+package com.lrx.router.lib.core;
 
 
-import com.lrx.lib.utils.LogUtil;
+import com.lrx.router.lib.utils.LogUtil;
 
 /**
  * Created by daven.liu on 2018/1/31 0031.

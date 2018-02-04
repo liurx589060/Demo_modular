@@ -1,6 +1,6 @@
 package com.lrx.extralib.test;
 
-import com.lrx.lib.core.Router;
+import com.lrx.router.lib.core.Router;
 
 /**
  * Created by Administrator on 2018/2/3.

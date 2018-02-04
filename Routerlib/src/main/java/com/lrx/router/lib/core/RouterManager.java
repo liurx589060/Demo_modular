@@ -1,4 +1,4 @@
-package com.lrx.lib.core;
+package com.lrx.router.lib.core;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
