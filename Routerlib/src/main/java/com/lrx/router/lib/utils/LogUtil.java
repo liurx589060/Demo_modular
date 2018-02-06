@@ -7,7 +7,7 @@ import android.util.Log;
  */
 
 public class LogUtil {
-    public final static String TAG = "commonlib";
+    public final static String TAG = "routerLib";
     public static boolean isDebug = true;
 
     public static void e(String msg) {

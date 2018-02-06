@@ -1,7 +1,11 @@
 package com.lrx.router.lib.core;
 
 
+import android.content.Context;
+
 import com.lrx.router.lib.utils.LogUtil;
+
+import dalvik.system.DexClassLoader;
 
 /**
  * Created by daven.liu on 2018/1/31 0031.
@@ -79,6 +83,28 @@ public abstract class Router<T> {
             LogUtil.e(e.toString());
             return false;
         }
+    }
+
+    public static Object createNativeDex(Context context,String dexPath,String impClassName) {
+        //由于dex文件是包含在apk或者jar文件中的,所以在加载class之前就需要先将dex文件解压出来，dexOutputDir为解压路径
+        String dexOutputDir = context.getApplicationInfo().dataDir;
+        //目标类可能使用的c或者c++的库文件的存放路径
+        String libPath = context.getApplicationInfo().nativeLibraryDir;
+        DexClassLoader dcLoader = new DexClassLoader(dexPath,dexOutputDir,null,context.getClassLoader());
+        LogUtil.i("dexPath:" + dexPath + "   " +
+                "dexOutputDir:" + dexOutputDir + "   " +
+                "libPath:" + libPath);
+
+        try {
+            Class clz = dcLoader.loadClass(impClassName);
+            LogUtil.d("yy",impClassName + "--find this class and load the class");
+            return clz.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+            LogUtil.e(e.toString());
+            throw new RouterException(e.toString() + "--" + "the dex path is not valid or the class is not correct");
+        }
+
     }
 
     public boolean isAvailable() {

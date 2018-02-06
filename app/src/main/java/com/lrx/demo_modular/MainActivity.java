@@ -1,12 +1,15 @@
 package com.lrx.demo_modular;
 
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.lrx.extralib.login.LoginApi;
 import com.lrx.extralib.login.LoginRouter;
 import com.lrx.extralib.test.ExtraCallback;
 import com.lrx.extralib.test.ExtraRouter;
+import com.lrx.router.lib.core.Router;
 
 public class MainActivity extends AppCompatActivity {
     private LoginRouter loginRouter;
@@ -29,5 +32,9 @@ public class MainActivity extends AppCompatActivity {
                 AppRouterUtil.getLoginRouter().getProxy().loginOut();
             }
         });
+
+        LoginApi loginApi = (LoginApi) Router.createNativeDex(this, Environment.getExternalStorageDirectory().getPath() + "/" + "login.module-release.apk"
+                ,"com.lrx.loginlib.LoginApiImp");
+        loginApi.startActivity(this);
     }
 }
