@@ -50,6 +50,6 @@ dependencies {
 //    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:25.3.1'
 //    compile project(':extralib')
-//    provided files('libs/extra.jar')
-    compile files('libs/extra_1.0.0.jar')
+//    compile files('libs/extra_1.0.0.jar')
+    provided files('libs/extra_1.0.0.jar')
 }

@@ -2,7 +2,6 @@ package com.lrx.router.lib.core;
 
 
 import android.content.Context;
-import android.os.Environment;
 import android.os.Handler;
 
 import com.lrx.router.lib.interfaces.NativeDexCallback;
@@ -128,6 +127,10 @@ public abstract class Router<T> {
                     Class clz = dcLoader.loadClass(impClassName);
                     LogUtil.d("yy",impClassName + "--find this class and load the class");
                     final Object result = clz.newInstance();
+                    //create unInstall apk resource
+                    if(dexPath.endsWith("apk")) {
+                        PluginResourceLoader.getInstance().createAssetManager(context,dexPath);
+                    }
                     if(callback != null) {
                         new Handler(context.getMainLooper()).post(new Runnable() {
                             @Override
