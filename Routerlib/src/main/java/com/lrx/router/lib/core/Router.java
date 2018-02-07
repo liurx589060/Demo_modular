@@ -2,8 +2,15 @@ package com.lrx.router.lib.core;
 
 
 import android.content.Context;
+import android.os.Environment;
+import android.os.Handler;
 
+import com.lrx.router.lib.interfaces.NativeDexCallback;
 import com.lrx.router.lib.utils.LogUtil;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 
 import dalvik.system.DexClassLoader;
 
@@ -85,26 +92,98 @@ public abstract class Router<T> {
         }
     }
 
-    public static Object createNativeDex(Context context,String dexPath,String impClassName) {
-        //由于dex文件是包含在apk或者jar文件中的,所以在加载class之前就需要先将dex文件解压出来，dexOutputDir为解压路径
-        String dexOutputDir = context.getApplicationInfo().dataDir;
-        //目标类可能使用的c或者c++的库文件的存放路径
-        String libPath = context.getApplicationInfo().nativeLibraryDir;
-        DexClassLoader dcLoader = new DexClassLoader(dexPath,dexOutputDir,null,context.getClassLoader());
-        LogUtil.i("dexPath:" + dexPath + "   " +
-                "dexOutputDir:" + dexOutputDir + "   " +
-                "libPath:" + libPath);
+    /**
+     * maybe need to copy file ,so must use asynchronous thread for return the result by callback
+     * @param context
+     * @param dexFilePath
+     * @param impClassName
+     * @return
+     */
+    public static void createNativeDex(final Context context, final String dexFilePath, final String impClassName, final NativeDexCallback callback) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                final String dexPath = copyDexToFilefromAssert(context,dexFilePath);
+                if(!new File(dexPath).exists()) {
+                    if(callback != null) {
+                        new Handler(context.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onResult(null,dexPath,impClassName,"con't find the dex---" + dexFilePath);
+                            }
+                        });
+                    }
+                    return;
+                }
+                //由于dex文件是包含在apk或者jar文件中的,所以在加载class之前就需要先将dex文件解压出来，dexOutputDir为解压路径
+                String dexOutputDir = context.getDir("dex",Context.MODE_PRIVATE).getPath();
+                //目标类可能使用的c或者c++的库文件的存放路径
+                String libPath = context.getApplicationInfo().nativeLibraryDir;
+                DexClassLoader dcLoader = new DexClassLoader(dexPath,dexOutputDir,libPath,context.getClassLoader());
+                LogUtil.i("dexPath:" + dexPath + "   " +
+                        "dexOutputDir:" + dexOutputDir + "   " +
+                        "libPath:" + libPath);
 
-        try {
-            Class clz = dcLoader.loadClass(impClassName);
-            LogUtil.d("yy",impClassName + "--find this class and load the class");
-            return clz.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-            LogUtil.e(e.toString());
-            throw new RouterException(e.toString() + "--" + "the dex path is not valid or the class is not correct");
+                try {
+                    Class clz = dcLoader.loadClass(impClassName);
+                    LogUtil.d("yy",impClassName + "--find this class and load the class");
+                    final Object result = clz.newInstance();
+                    if(callback != null) {
+                        new Handler(context.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onResult(result,dexPath,impClassName,"success");
+                            }
+                        });
+                    }
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    LogUtil.e(e.toString());
+                    if(callback != null) {
+                        new Handler(context.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onResult(null,dexPath,impClassName,e.toString());
+                            }
+                        });
+                    }
+                }
+            }
+        };
+        new Thread(runnable).start();
+    }
+
+    private static String copyDexToFilefromAssert(Context context,String dexPath) {
+        String preSuffix = "file://";
+        if(dexPath.startsWith(preSuffix)) {
+            try {
+                String filename = dexPath.substring(preSuffix.length());
+                File file = new File(context.getApplicationInfo().dataDir + File.separator + filename);
+                LogUtil.d("yy",file.getPath());
+                if (file.exists()) {
+                    return file.getPath();
+                }
+                LogUtil.d("copyDexToFilefromAssert--" + filename);
+                InputStream inputStream = context.getAssets().open(filename);
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                byte[] buffer = new byte[1024];
+                int len = 0;
+                while ((len = inputStream.read(buffer)) != -1) {
+                    fileOutputStream.write(buffer,0,len);
+                }
+                fileOutputStream.flush();
+                inputStream.close();
+                fileOutputStream.close();
+                return file.getPath();
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                LogUtil.e(e.toString());
+                return dexPath;
+            }
         }
-
+        //原样返回
+        return dexPath;
     }
 
     public boolean isAvailable() {

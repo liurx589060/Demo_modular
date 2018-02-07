@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 26
+        targetSdkVersion 21
         versionCode 1
         versionName "1.0"
     }
@@ -22,3 +22,25 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':Routerlib')
 }
+
+ext{
+    SDK_BASENAME = "extra"
+    SDK_VERSION = "1.0.0"
+    sdkDestinationPath = "./release"
+}
+
+//task to delete the old jar
+task deleteOldJar(type: Delete) {
+    delete "${sdkDestinationPath}/${SDK_BASENAME}_${SDK_VERSION}.jar"
+}
+
+//task to export contents as jar
+task exportJar(type: Copy) {
+    from('build/intermediates/bundles/default/')
+    into("${sdkDestinationPath}")
+    include('classes.jar')
+    ///Rename the jar
+    rename('classes.jar', "${SDK_BASENAME}_${SDK_VERSION}.jar")
+}
+
+exportJar.dependsOn(deleteOldJar, build)

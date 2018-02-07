@@ -28,6 +28,7 @@ public class TestLoginActivity extends Activity {
             public void onClick(View v) {
                 LoginApiImp loginApiImp = new LoginApiImp();
                 loginApiImp.loginByGuest("RTDTER");
+                loginApiImp.startActivity(TestLoginActivity.this);
             }
         });
     }

@@ -10,6 +10,7 @@ import com.lrx.extralib.login.LoginRouter;
 import com.lrx.extralib.test.ExtraCallback;
 import com.lrx.extralib.test.ExtraRouter;
 import com.lrx.router.lib.core.Router;
+import com.lrx.router.lib.interfaces.NativeDexCallback;
 
 public class MainActivity extends AppCompatActivity {
     private LoginRouter loginRouter;
@@ -33,8 +34,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        LoginApi loginApi = (LoginApi) Router.createNativeDex(this, Environment.getExternalStorageDirectory().getPath() + "/" + "login.module-release.apk"
-                ,"com.lrx.loginlib.LoginApiImp");
-        loginApi.startActivity(this);
+//        String dexFilePath = Environment.getExternalStorageDirectory().getPath() + "/" + "login.module-release.apk";
+        String dexFilePath = "file://login.module-release.apk";
+        Router.createNativeDex(this, dexFilePath, "com.lrx.loginlib.LoginApiImp", new NativeDexCallback() {
+            @Override
+            public void onResult(Object clz, String dexPath, String className, String errorMsg) {
+                if (clz instanceof LoginApi) {
+                    LoginApi loginApi = (LoginApi) clz;
+                    loginApi.startActivity(MainActivity.this);
+                }
+            }
+        });
     }
 }
