@@ -1,6 +1,9 @@
 package com.lrx.extralib;
 
+import android.content.res.Resources;
+
 import com.lrx.extralib.login.LoginRouter;
+import com.lrx.router.lib.core.PluginResourceLoader;
 import com.lrx.router.lib.core.RouterManager;
 
 /**
@@ -18,5 +21,9 @@ public class RouterSDK {
 
     public static LoginRouter getLoginRouter() {
         return RouterManager.getInstance().getRouter(LoginRouter.class);
+    }
+
+    public static Resources getPluginResources() {
+        return PluginResourceLoader.getInstance().getResources();
     }
 }

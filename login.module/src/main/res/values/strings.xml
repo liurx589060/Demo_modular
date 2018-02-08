@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">LoginLib</string>
+    <string name="message">Hello world</string>
 </resources>

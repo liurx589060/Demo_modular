@@ -2,6 +2,8 @@ package com.lrx.router.lib.core;
 
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Handler;
 
 import com.lrx.router.lib.interfaces.NativeDexCallback;
@@ -18,7 +20,8 @@ import dalvik.system.DexClassLoader;
  */
 
 public abstract class Router<T> {
-    protected boolean isCreatedSuccess;
+    private boolean isCreatedSuccess;
+    private boolean isLoadComplete;
     private T proxy;
     private T errorProxy;
     private boolean isAvailable = true;
@@ -34,6 +37,7 @@ public abstract class Router<T> {
         proxy = create(getImpClassName());
         if(proxy != null) {
             isCreatedSuccess = true;
+            isLoadComplete = true;
             LogUtil.i("proxy class--" + proxy.getClass().getName());
         }
         LogUtil.i("createProxy--errorImp=" + isCreatedSuccess());
@@ -48,11 +52,13 @@ public abstract class Router<T> {
         if(!isAvailable) {
             if(errorProxy == null) {
                 errorProxy = getErrorProxyClass();
+                isLoadComplete = true;
             }
             return errorProxy;
         }else {
             if(proxy == null) {
                 proxy = getErrorProxyClass();
+                isLoadComplete = true;
             }
             return proxy;
         }
@@ -60,6 +66,10 @@ public abstract class Router<T> {
 
     public boolean isCreatedSuccess() {
         return isCreatedSuccess;
+    }
+
+    public boolean isLoadComplete() {
+        return isLoadComplete;
     }
 
     public  static <T> T create(final String impClassName) {

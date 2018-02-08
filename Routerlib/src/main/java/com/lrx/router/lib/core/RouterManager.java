@@ -93,4 +93,8 @@ public class RouterManager {
         }
         return router.isCreatedSuccess;
     }
+
+    public boolean registerRouterByDex(Class<? extends Router> routerClass,boolean isConvertNull) {
+
+    }
 }
