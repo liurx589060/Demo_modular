@@ -37,8 +37,8 @@ public class LoginApiImp implements LoginApi {
     @Override
     public void startActivity(final Activity activity) {
         final AlertDialog alertDialog = new AlertDialog.Builder(activity).setTitle("Title")
-                .setIcon(getResourcesHelper(activity).getResources().getDrawable(R.drawable.a))
-                .setMessage(getResourcesHelper(activity).getResources().getString(R.string.message))
+                .setIcon(getResourcesHelper(activity).getResources().getDrawable(getResourcesHelper(activity).getDrawableId(activity,"a")))
+                .setMessage(getResourcesHelper(activity).getResources().getString(getResourcesHelper(activity).getStringId(activity,"message")))
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -54,15 +54,15 @@ public class LoginApiImp implements LoginApi {
 
         Dialog dialog = new Dialog(activity);
         int resId =  getResourcesHelper(activity).getLayoutId(activity,"activity_test");
-        View contentView = LayoutInflater.from(activity).inflate(getResourcesHelper(activity).getResources().getLayout(R.layout.activity_test),null);
-        Button button = (Button) contentView.findViewById(R.id.login_btn);
+        Log.e("zz","resId=" + resId);
+        View contentView = LayoutInflater.from(activity).inflate(getResourcesHelper(activity).getResources().getLayout(resId),null);
+        Button button = (Button) contentView.findViewById(getResourcesHelper(activity).getId(activity,"login_btn"));
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(activity,"click the login button",Toast.LENGTH_LONG).show();
             }
         });
-        Log.e("zz","resId=" + resId + "---view=" + contentView);
         dialog.setContentView(contentView);
         dialog.show();
     }
