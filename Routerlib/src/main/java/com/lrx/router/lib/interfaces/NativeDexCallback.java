@@ -11,5 +11,5 @@ public interface NativeDexCallback {
      * @param dexPath
      * @param className
      */
-    void onResult(Object clz,String dexPath,String className,String errorMsg);
+    void onResult(Object clz,String dexPath,String className,int errorCode,String errorMsg);
 }

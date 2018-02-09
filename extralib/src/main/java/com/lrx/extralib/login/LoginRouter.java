@@ -15,7 +15,7 @@ public class LoginRouter extends Router<LoginApi> {
     }
 
     @Override
-    protected LoginApi getErrorProxyClass() {
+    public LoginApi getErrorProxyClass() {
         return new ErrorImpLoginApi();
     }
 }

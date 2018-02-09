@@ -1,1 +1,1 @@
-include ':app', ':Routerlib', ':login.module', ':extratest.module', ':extralib'
+include ':app', ':Routerlib', ':login.module', ':test.module', ':extralib'

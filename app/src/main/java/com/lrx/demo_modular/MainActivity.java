@@ -1,16 +1,14 @@
 package com.lrx.demo_modular;
 
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.lrx.extralib.login.LoginApi;
+import com.lrx.extralib.RouterSDK;
 import com.lrx.extralib.login.LoginRouter;
-import com.lrx.extralib.test.ExtraCallback;
-import com.lrx.extralib.test.ExtraRouter;
-import com.lrx.router.lib.core.Router;
-import com.lrx.router.lib.interfaces.NativeDexCallback;
+import com.lrx.extralib.test.TestCallback;
+import com.lrx.extralib.test.TestRouter;
+import com.lrx.router.lib.interfaces.RegisterPluginCallback;
 
 public class MainActivity extends AppCompatActivity {
     private LoginRouter loginRouter;
@@ -20,30 +18,40 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        AppRouterUtil.registerLoginRouter();
-        Log.e("yy","实现层 loginByGuest--" + AppRouterUtil.getLoginRouter().getProxy().loginByGuest("Song yue"));
+        RouterSDK.init(getApplicationContext());
+        RouterSDK.registerLoginByPlugin(new RegisterPluginCallback() {
+            @Override
+            public void onResult(String dexPath, String className, int code, String errorMsg) {
+                Log.e("yy","实现层 loginByGuest--" + RouterSDK.getLoginRouter().getProxy().loginByGuest("Song yue"));
+                RouterSDK.getLoginRouter().getProxy().startActivity(MainActivity.this);
+            }
+        });
 
-        AppRouterUtil.registerExtraRouter();
-        ExtraRouter extraRouter = AppRouterUtil.getExtraRouter();
+//        AppRouterUtil.registerLoginRouter();
+//        Log.e("yy","实现层 loginByGuest--" + AppRouterUtil.getLoginRouter().getProxy().loginByGuest("Song yue"));
+//        AppRouterUtil.getLoginRouter().getProxy().startActivity(this,false);
+
+        RouterSDK.registerTestRouter();
+        TestRouter extraRouter = RouterSDK.getTestRouter();
         extraRouter.getProxy().testTip(this,"蜡笔小新");
-        extraRouter.getProxy().testResult(new ExtraCallback() {
+        extraRouter.getProxy().testResult(new TestCallback() {
             @Override
             public void onResult(int code, String msg) {
                 Log.e("yy","code=" + code + "--msg=" + msg);
-                AppRouterUtil.getLoginRouter().getProxy().loginOut();
+                RouterSDK.getLoginRouter().getProxy().loginOut();
             }
         });
 
 //        String dexFilePath = Environment.getExternalStorageDirectory().getPath() + "/" + "login.module-release.apk";
-        String dexFilePath = "file://login.module-release.apk";
-        Router.createNativeDex(this, dexFilePath, "com.lrx.loginlib.LoginApiImp", new NativeDexCallback() {
-            @Override
-            public void onResult(Object clz, String dexPath, String className, String errorMsg) {
-                if (clz instanceof LoginApi) {
-                    LoginApi loginApi = (LoginApi) clz;
-                    loginApi.startActivity(MainActivity.this);
-                }
-            }
-        });
+//        String dexFilePath = "file://login.module-release.apk";
+//        RouterManager.createNativeDex(this, dexFilePath, "com.lrx.loginlib.LoginApiImp", new NativeDexCallback() {
+//            @Override
+//            public void onResult(Object clz, String dexPath, String className, String errorMsg) {
+//                if (clz instanceof LoginApi) {
+//                    LoginApi loginApi = (LoginApi) clz;
+//                    loginApi.startActivity(MainActivity.this);
+//                }
+//            }
+//        });
     }
 }

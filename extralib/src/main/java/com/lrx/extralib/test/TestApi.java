@@ -6,7 +6,7 @@ import android.content.Context;
  * Created by Administrator on 2018/2/3.
  */
 
-public interface ExtraApi {
+public interface TestApi {
     void testTip(Context context,String msg);
-    void testResult(ExtraCallback callback);
+    void testResult(TestCallback callback);
 }

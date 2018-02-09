@@ -6,14 +6,14 @@ import com.lrx.router.lib.core.Router;
  * Created by Administrator on 2018/2/3.
  */
 
-public class ExtraRouter extends Router<ExtraApi> {
+public class TestRouter extends Router<TestApi> {
     @Override
     public String getImpClassName() {
         return "com.lrx.extratestlib.ExtraImpApi";
     }
 
     @Override
-    protected ExtraApi getErrorProxyClass() {
-        return new ErrorImpExtraApi();
+    public TestApi getErrorProxyClass() {
+        return new ErrorImpTestApi();
     }
 }

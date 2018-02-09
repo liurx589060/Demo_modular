@@ -11,8 +11,8 @@
             <option value="$PROJECT_DIR$/Routerlib" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/extralib" />
-            <option value="$PROJECT_DIR$/extratest.module" />
             <option value="$PROJECT_DIR$/login.module" />
+            <option value="$PROJECT_DIR$/test.module" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

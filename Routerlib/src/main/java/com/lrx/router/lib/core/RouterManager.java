@@ -1,5 +1,10 @@
 package com.lrx.router.lib.core;
 
+import android.content.Context;
+
+import com.lrx.router.lib.interfaces.NativeDexCallback;
+import com.lrx.router.lib.interfaces.RegisterPluginCallback;
+
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,11 +14,24 @@ import java.util.Map;
  */
 
 public class RouterManager {
-    private Map<String,Router> mRouterMap;
+    private Map<String,Router> routerMap;
     private boolean isConvertNull;
+    private Context context;
+    private boolean isInit;
+
+    public void init(Context context) {
+        this.context = context;
+        this.isInit = true;
+    }
+
+    private void checkContext() {
+        if(context == null) {
+            throw new RouterException("please init first,invoke the RouterManager.getInstance().init(Context context)");
+        }
+    }
 
     public RouterManager() {
-        mRouterMap = new HashMap();
+        routerMap = new HashMap();
     }
 
     public boolean isConvertNull() {
@@ -22,6 +40,18 @@ public class RouterManager {
 
     public void setConvertNull(boolean convertNull) {
         isConvertNull = convertNull;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public boolean isInit() {
+        return isInit;
+    }
+
+    public Map<String, Router> getRouterMap() {
+        return routerMap;
     }
 
     private static class RouterManagerHolder {
@@ -34,7 +64,7 @@ public class RouterManager {
 
     public <T extends Router> T getRouter(Class<T> clz) {
         checkRegisterStatus();
-        T resultClass = (T) mRouterMap.get(clz.getName());
+        T resultClass = (T) routerMap.get(clz.getName());
         if(!isConvertNull) {
             //return the true proxy,don't convert the proxy
             return resultClass;
@@ -51,50 +81,60 @@ public class RouterManager {
     }
 
     private void checkRegisterStatus() {
-        if(mRouterMap == null) {
+        if(routerMap == null) {
             throw new RouterException("please Initialize the RouterManager");
         }
     }
 
-    public boolean registerRouter(Class<? extends Router> routerClass) {
-        return registerRouter(routerClass,true);
+    public boolean registerRouter(Router router) {
+        return registerRouter(router,true);
+    }
+
+    public boolean registerRouterByPlugin(Router router,RegisterPluginCallback registerPluginCallback) {
+        return registerRouterByPlugin(router,true,registerPluginCallback);
     }
 
     /**
      * register the router
-     * @param routerClass
+     * @param router
      * @param isConvertNull if is false,return the true proxy(maybe is null)
      *                     if is true,will return the notNull proxy(will convert the null proxy)
      * @return
      */
-    public boolean registerRouter(Class<? extends Router> routerClass,boolean isConvertNull) {
-        this.isConvertNull = isConvertNull;
-        Router router;
-        if(routerClass != null) {
-            try {
-                router = routerClass.newInstance();
-                // 访问私有方法
-                if(router.getClass().getSuperclass() != null) {
-                    Method method = router.getClass().getSuperclass().getDeclaredMethod("createProxy");
-                    method.setAccessible(true);//设置不做安全检查，这样才能访问private属性
-                    method.invoke(router);
-                    mRouterMap.put(routerClass.getName(),router);
-                }
-            }catch (NoSuchMethodException e) {
-                throw new RouterException("please use class extends Router");
-            }catch (Exception e1) {
-                throw new RouterException("registerRouter fail,please check register router class,must use class extends Router");
-            }
-        }else {
-            throw new RouterException("registerRouter the routerKey is null,please enter valid key");
-        }
-        if(router != null) {
-            router.setConvertNull(isConvertNull);
-        }
-        return router.isCreatedSuccess;
+    public boolean registerRouter(Router router,boolean isConvertNull) {
+        return ReflectCore.register(router,"createProxy",isConvertNull,null);
     }
 
-    public boolean registerRouterByDex(Class<? extends Router> routerClass,boolean isConvertNull) {
+    /**
+     * register the router by plugin apk,jar,dex
+     * @param router
+     * @param isConvertNull if is false,return the true proxy(maybe is null)
+     *                     if is true,will return the notNull proxy(will convert the null proxy)
+     * @return
+     */
+    public boolean registerRouterByPlugin(Router router, boolean isConvertNull, RegisterPluginCallback registerPluginCallback) {
+        checkContext();
+        return ReflectCore.register(router,"createPluginDexProxy",isConvertNull,registerPluginCallback);
+    }
 
+    /**
+     * can use impClassName to create instance
+     * @param impClassName
+     * @return
+     */
+    public static Object create(String impClassName) {
+        return ReflectCore.create(impClassName);
+    }
+
+    /**
+     * can use impClassName to create instance by plugin apk,jar,dex
+     * @param context
+     * @param dexFilePath
+     * @param impClassName
+     * @param callback
+     * @return
+     */
+    public static void createNativeDex(final Context context, final String dexFilePath, final String impClassName, final NativeDexCallback callback) {
+       ReflectCore.createNativeDex(context,dexFilePath,impClassName,callback);
     }
 }

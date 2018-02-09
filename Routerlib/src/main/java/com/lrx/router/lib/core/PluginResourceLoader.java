@@ -54,7 +54,7 @@ public class PluginResourceLoader {
      * @param apkPath
      * @return
      */
-    public void createAssetManager(Context context,String apkPath) {
+    public void createAssetManager(Context context,String apkPath,String originDexPath) {
         try {
             String pluginApkPackageName = "";
             PackageManager pm = context.getPackageManager();
@@ -62,7 +62,7 @@ public class PluginResourceLoader {
             if (info != null) {
                 ApplicationInfo applicationInfo = info.applicationInfo;
                 pluginApkPackageName = applicationInfo.packageName;
-                packageNameMap.put(apkPath,pluginApkPackageName);
+                packageNameMap.put(originDexPath,pluginApkPackageName);
             }
 
             AssetManager assetManager = AssetManager.class.newInstance();
