@@ -38,9 +38,8 @@ public abstract class Router<T> {
         if(proxy != null) {
             isCreatedSuccess = true;
             isLoadComplete = true;
-            LogUtil.i("createProxy proxy class--" + proxy.getClass().getName());
         }
-        LogUtil.i("createProxy--errorImp=" + isCreatedSuccess());
+        LogUtil.i("createProxy proxy class--" + proxy.getClass().getName() + "---" + isCreatedSuccess);
         loadType = LoadType.LOAD_LIB;
     }
 
