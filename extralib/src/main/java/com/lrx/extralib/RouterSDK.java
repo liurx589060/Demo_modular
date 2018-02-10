@@ -2,6 +2,7 @@ package com.lrx.extralib;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.os.Environment;
 
 import com.lrx.extralib.login.LoginRouter;
 import com.lrx.extralib.test.TestRouter;
@@ -38,7 +39,8 @@ public class RouterSDK {
 
     public static void registerLoginByPlugin(boolean isConvertNull,RegisterPluginCallback registerPluginCallback) {
         LoginRouter loginRouter = new LoginRouter();
-        loginRouter.setPluginDexPath("file://login.module-release.apk");
+        loginRouter.setPluginDexPath("file://login/login.module-debug.apk");
+//        loginRouter.setPluginDexPath(Environment.getExternalStorageDirectory().getPath() + "/login.module-release.apk");
         RouterManager.getInstance().registerRouterByPlugin(loginRouter,isConvertNull,registerPluginCallback);
     }
 

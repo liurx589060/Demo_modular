@@ -26,7 +26,8 @@ public class RouterManager {
 
     private void checkContext() {
         if(context == null) {
-            throw new RouterException("please init first,invoke the RouterManager.getInstance().init(Context context)");
+            throw new RouterException("please init first,invoke the RouterManager.getInstance().init(Context context)" +
+                    ",use the applicationContext,suggest init at the application onCreate()");
         }
     }
 
@@ -63,6 +64,7 @@ public class RouterManager {
     }
 
     public <T extends Router> T getRouter(Class<T> clz) {
+        checkContext();
         checkRegisterStatus();
         T resultClass = (T) routerMap.get(clz.getName());
         if(!isConvertNull) {
@@ -102,6 +104,7 @@ public class RouterManager {
      * @return
      */
     public boolean registerRouter(Router router,boolean isConvertNull) {
+        checkContext();
         return ReflectCore.register(router,"createProxy",isConvertNull,null);
     }
 

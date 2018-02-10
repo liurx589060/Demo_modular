@@ -6,8 +6,9 @@
       <module fileurl="file://$PROJECT_DIR$/Routerlib/Routerlib.iml" filepath="$PROJECT_DIR$/Routerlib/Routerlib.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/extralib/extralib.iml" filepath="$PROJECT_DIR$/extralib/extralib.iml" />
+      <module fileurl="file://E:\working_daven\AS_workspace\Demo_modular\test.module\extratest.module.iml" filepath="E:\working_daven\AS_workspace\Demo_modular\test.module\extratest.module.iml" />
       <module fileurl="file://$PROJECT_DIR$/login.module/login.module.iml" filepath="$PROJECT_DIR$/login.module/login.module.iml" />
-      <module fileurl="file://$PROJECT_DIR$/test.module/extratest.module.iml" filepath="$PROJECT_DIR$/test.module/extratest.module.iml" />
+      <module fileurl="file://$PROJECT_DIR$/test.module/test.module.iml" filepath="$PROJECT_DIR$/test.module/test.module.iml" />
     </modules>
   </component>
 </project>

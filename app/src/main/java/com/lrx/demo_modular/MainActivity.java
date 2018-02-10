@@ -8,6 +8,7 @@ import com.lrx.extralib.RouterSDK;
 import com.lrx.extralib.login.LoginRouter;
 import com.lrx.extralib.test.TestCallback;
 import com.lrx.extralib.test.TestRouter;
+import com.lrx.router.lib.core.ResourcesCore;
 import com.lrx.router.lib.interfaces.RegisterPluginCallback;
 
 public class MainActivity extends AppCompatActivity {
@@ -19,17 +20,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         RouterSDK.init(getApplicationContext());
-        RouterSDK.registerLoginByPlugin(new RegisterPluginCallback() {
-            @Override
-            public void onResult(String dexPath, String className, int code, String errorMsg) {
-                Log.e("yy","实现层 loginByGuest--" + RouterSDK.getLoginRouter().getProxy().loginByGuest("Song yue"));
-                RouterSDK.getLoginRouter().getProxy().startActivity(MainActivity.this);
-            }
-        });
+//        RouterSDK.registerLoginByPlugin(new RegisterPluginCallback() {
+//            @Override
+//            public void onResult(String dexPath, String className, int code, String errorMsg) {
+//                Log.e("yy","实现层 loginByGuest--" + RouterSDK.getLoginRouter().getProxy().loginByGuest("Song yue"));
+//                RouterSDK.getLoginRouter().getProxy().startActivity(MainActivity.this);
+//            }
+//        });
 
-//        AppRouterUtil.registerLoginRouter();
-//        Log.e("yy","实现层 loginByGuest--" + AppRouterUtil.getLoginRouter().getProxy().loginByGuest("Song yue"));
-//        AppRouterUtil.getLoginRouter().getProxy().startActivity(this,false);
+        RouterSDK.registerLoginRouter();
+        Log.e("yy","实现层 loginByGuest--" + RouterSDK.getLoginRouter().getProxy().loginByGuest("Song yue"));
+        RouterSDK.getLoginRouter().getProxy().startActivity(this);
 
         RouterSDK.registerTestRouter();
         TestRouter extraRouter = RouterSDK.getTestRouter();

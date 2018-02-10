@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,35 +37,40 @@ public class LoginApiImp implements LoginApi {
 
     @Override
     public void startActivity(final Activity activity) {
-        final AlertDialog alertDialog = new AlertDialog.Builder(activity).setTitle("Title")
-                .setIcon(getResourcesHelper(activity).getResources().getDrawable(getResourcesHelper(activity).getDrawableId(activity,"a")))
-                .setMessage(getResourcesHelper(activity).getResources().getString(getResourcesHelper(activity).getStringId(activity,"message")))
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                }).create();
-        alertDialog.show();
+//        final AlertDialog alertDialog = new AlertDialog.Builder(activity).setTitle("Title")
+//                .setIcon(getResourcesHelper(activity).getResources().getDrawable(getResourcesHelper(activity).getDrawableId(activity,"a")))
+//                .setMessage(getResourcesHelper(activity).getResources().getString(getResourcesHelper(activity).getStringId(activity,"tips_help_string")))
+//                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                    }
+//                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                    }
+//                }).create();
+//        alertDialog.show();
+//
+//        Log.e("zz","resId=" + getResourcesHelper(activity).getStringId(activity,"message"));
+//
+//        Dialog dialog = new Dialog(activity);
+//        int resId =  getResourcesHelper(activity).getLayoutId(activity,"activity_test");
+//        Log.e("zz","resId=" + resId);
+//        View contentView = LayoutInflater.from(activity).inflate(getResourcesHelper(activity).getResources().getLayout(resId),null);
+//        Button button = (Button) contentView.findViewById(getResourcesHelper(activity).getId(activity,"login_btn"));
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(activity,"click the login button",Toast.LENGTH_LONG).show();
+//            }
+//        });
+//        dialog.setContentView(contentView);
+//        dialog.show();
 
-        Log.e("zz","resId=" + getResourcesHelper(activity).getStringId(activity,"message"));
+        Intent intent = new Intent(activity,TestLoginActivity.class);
+        activity.startActivity(intent);
 
-        Dialog dialog = new Dialog(activity);
-        int resId =  getResourcesHelper(activity).getLayoutId(activity,"activity_test");
-        Log.e("zz","resId=" + resId);
-        View contentView = LayoutInflater.from(activity).inflate(getResourcesHelper(activity).getResources().getLayout(resId),null);
-        Button button = (Button) contentView.findViewById(getResourcesHelper(activity).getId(activity,"login_btn"));
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(activity,"click the login button",Toast.LENGTH_LONG).show();
-            }
-        });
-        dialog.setContentView(contentView);
-        dialog.show();
+        Log.e("yy","FunUtil--" + FunUtil.printTime());
     }
 
     private ResourcesHelper getResourcesHelper(Activity activity) {

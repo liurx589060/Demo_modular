@@ -9,7 +9,9 @@ import com.lrx.router.lib.utils.ConstantUtil;
 import com.lrx.router.lib.utils.LogUtil;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 
@@ -46,8 +48,9 @@ public class ReflectCore {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                final String dexPath = copyDexToFilefromAssert(context,dexFilePath);
-                if(!new File(dexPath).exists()) {
+                final String dexPath = copyDexToFilefromDexPath(context,dexFilePath);
+                if(dexPath == null || !new File(dexPath).exists()) {
+                    LogUtil.i("con't find the dex form the dexFilePath--" + dexFilePath);
                     if(callback != null) {
                         new Handler(context.getMainLooper()).post(new Runnable() {
                             @Override
@@ -70,7 +73,7 @@ public class ReflectCore {
 
                 try {
                     Class clz = dcLoader.loadClass(impClassName);
-                    LogUtil.d("yy",impClassName + "--find this class and load the class");
+                    LogUtil.i(impClassName + "--find this class and load the class");
                     final Object result = clz.newInstance();
                     //create unInstall apk resource
                     if(dexPath.endsWith("apk")) {
@@ -112,37 +115,98 @@ public class ReflectCore {
         new Thread(runnable).start();
     }
 
-    private static String copyDexToFilefromAssert(Context context,String dexPath) {
+    private static String toCopyFile(InputStream inputStream,File file) throws IOException {
+        FileOutputStream fileOutputStream = new FileOutputStream(file);
+        byte[] buffer = new byte[1024];
+        int len = 0;
+        while ((len = inputStream.read(buffer)) != -1) {
+            fileOutputStream.write(buffer,0,len);
+        }
+        fileOutputStream.flush();
+        inputStream.close();
+        fileOutputStream.close();
+        return file.getPath();
+    }
+
+    private static String copyDexToFilefromDexPath(Context context,String dexPath) {
         String preSuffix = "file://";
-        if(dexPath.startsWith(preSuffix)) {
-            try {
-                String filename = dexPath.substring(preSuffix.length());
+        try{
+            if(dexPath.startsWith(preSuffix)) {
+                String filename = fileExistInAssets(context,dexPath,preSuffix);
+                if(filename == null) {
+                    return null;
+                }
                 File file = new File(context.getApplicationInfo().dataDir + File.separator + filename);
                 LogUtil.d("yy",file.getPath());
                 if (file.exists()) {
                     return file.getPath();
                 }
-                LogUtil.d("copyDexToFilefromAssert--" + filename);
-                InputStream inputStream = context.getAssets().open(filename);
-                FileOutputStream fileOutputStream = new FileOutputStream(file);
-                byte[] buffer = new byte[1024];
-                int len = 0;
-                while ((len = inputStream.read(buffer)) != -1) {
-                    fileOutputStream.write(buffer,0,len);
+                if(!file.getParentFile().exists()) {
+                    //create parent dir
+                    file.getParentFile().mkdirs();
                 }
-                fileOutputStream.flush();
-                inputStream.close();
-                fileOutputStream.close();
-                return file.getPath();
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                LogUtil.e(e.toString());
-                return dexPath;
+                LogUtil.d("copyDexToFilefromAssert--" + filename);
+                return toCopyFile(context.getAssets().open(filename),file);
+            }else {
+                File originFile = new File(dexPath);
+                File desFile = new File(context.getApplicationInfo().dataDir + File.separator + "sdcard" + File.separator + originFile.getName());
+                LogUtil.d("yy",desFile.getPath());
+                if (desFile.exists()) {
+                    return desFile.getPath();
+                }
+                if(!originFile.exists()) {
+                    return null;
+                }
+                if(!desFile.getParentFile().exists()) {
+                    //create parent dir
+                    desFile.getParentFile().mkdirs();
+                }
+                LogUtil.d("copyDexToFilefromSDcard--" + desFile.getPath());
+                InputStream inputStream = new FileInputStream(originFile);
+                return toCopyFile(inputStream,desFile);
             }
+        }catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            LogUtil.e(e.toString());
+            return null;
         }
-        //原样返回
-        return dexPath;
+    }
+
+    /**
+     * jugde the file exist in assets
+     * @param context
+     * @param fileFullPath
+     * @param preSuffix
+     * @return
+     */
+    private static String fileExistInAssets(Context context,String fileFullPath,String preSuffix) {
+        try {
+            String fileName = fileFullPath.substring(preSuffix.length());
+            String realFileName = fileName;
+            int lastIndex = fileName.lastIndexOf("/");
+            String filePath = "";
+            if(lastIndex != -1) {
+               filePath = fileName.substring(0,lastIndex);
+               realFileName = fileName.substring(lastIndex + 1,fileName.length());
+            }
+            String[] names = context.getAssets().list(filePath);
+            boolean isExist = false;
+            for (String name:names) {
+                if(name.equals(realFileName)) {
+                    isExist = true;
+                    break;
+                }
+            }
+            if(isExist) {
+                return fileName;
+            }
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            LogUtil.e(e.toString());
+            return null;
+        }
     }
 
     public static Object create(final String impClassName) {
