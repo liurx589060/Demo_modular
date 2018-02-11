@@ -12,6 +12,8 @@
             <!--</intent-filter>-->
         </activity>
 
+        <activity android:name="com.lrx.loginlib.PTestActivity" />
+
     </application>
 
 </manifest>

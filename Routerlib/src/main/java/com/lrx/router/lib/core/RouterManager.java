@@ -1,27 +1,77 @@
 package com.lrx.router.lib.core;
 
+import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 
+import com.lrx.router.lib.activitys.ActivityStub;
 import com.lrx.router.lib.interfaces.NativeDexCallback;
 import com.lrx.router.lib.interfaces.RegisterPluginCallback;
+import com.lrx.router.lib.utils.LogUtil;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+
+import dalvik.system.DexClassLoader;
 
 /**
  * Created by Administrator on 2018/2/1.
  */
 
 public class RouterManager {
-    private Map<String,Router> routerMap;
+    private Map<Class,Router> routerMap;
+    private Map<Class,DexClassLoader> classLoaderMap;
     private boolean isConvertNull;
     private Context context;
     private boolean isInit;
+    private Class<? extends Activity> pluginClz;
+    private Class<? extends Router> routerClz;
 
-    public void init(Context context) {
-        this.context = context;
+    public void init(Application application) {
+        this.context = application.getApplicationContext();
         this.isInit = true;
+        application.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
+            @Override
+            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+                if(activity instanceof ActivityStub) {
+                    ReflectCore.invokeSetPluginActivity((ActivityStub) activity,pluginClz,routerClz);
+                }
+                LogUtil.e("yy","onActivityCreated");
+            }
+
+            @Override
+            public void onActivityStarted(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivityResumed(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivityPaused(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivityStopped(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+
+            }
+
+            @Override
+            public void onActivityDestroyed(Activity activity) {
+
+            }
+        });
     }
 
     private void checkContext() {
@@ -32,7 +82,8 @@ public class RouterManager {
     }
 
     public RouterManager() {
-        routerMap = new HashMap();
+        routerMap = new HashMap<Class, Router>();
+        classLoaderMap = new HashMap<Class, DexClassLoader>();
     }
 
     public boolean isConvertNull() {
@@ -51,8 +102,12 @@ public class RouterManager {
         return isInit;
     }
 
-    public Map<String, Router> getRouterMap() {
+    public Map<Class, Router> getRouterMap() {
         return routerMap;
+    }
+
+    public Map<Class, DexClassLoader> getClassLoaderMap() {
+        return classLoaderMap;
     }
 
     private static class RouterManagerHolder {
@@ -66,7 +121,7 @@ public class RouterManager {
     public <T extends Router> T getRouter(Class<T> clz) {
         checkContext();
         checkRegisterStatus();
-        T resultClass = (T) routerMap.get(clz.getName());
+        T resultClass = (T) routerMap.get(clz);
         if(!isConvertNull) {
             //return the true proxy,don't convert the proxy
             return resultClass;
@@ -132,12 +187,39 @@ public class RouterManager {
     /**
      * can use impClassName to create instance by plugin apk,jar,dex
      * @param context
-     * @param dexFilePath
-     * @param impClassName
+     * @param router
      * @param callback
      * @return
      */
-    public static void createNativeDex(final Context context, final String dexFilePath, final String impClassName, final NativeDexCallback callback) {
-       ReflectCore.createNativeDex(context,dexFilePath,impClassName,callback);
+    public static void createNativeDex(final Context context, Router router, final NativeDexCallback callback) {
+       ReflectCore.createNativeDex(context,router,callback);
+    }
+
+    /**
+     * start activity
+     * @param activity
+     * @param activityStub
+     * @param clz
+     * @param bundle
+     * @param routerClz
+     */
+    public void startActivity(Activity activity,Class<? extends ActivityStub> activityStub,Class<? extends PluginActivity> clz
+            ,Bundle bundle,Class<? extends Router> routerClz) {
+        if(ReflectCore.isClassPresent(clz.getName())) {
+            Intent intent = new Intent(activity,clz);
+            if(bundle != null) {
+                intent.putExtras(bundle);
+            }
+            activity.startActivity(intent);
+            return;
+        }
+        ReflectCore.startActivity(activity,activityStub,bundle);
+        this.pluginClz = clz;
+        this.routerClz = routerClz;
+    }
+
+    public void startActivity(Activity activity,Class<? extends PluginActivity> clz
+            ,Bundle bundle,Class<? extends Router> routerClz) {
+        startActivity(activity,ActivityStub.class,clz,bundle,routerClz);
     }
 }

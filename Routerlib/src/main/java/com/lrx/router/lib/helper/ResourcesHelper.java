@@ -1,6 +1,5 @@
 package com.lrx.router.lib.helper;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 
@@ -14,14 +13,12 @@ import com.lrx.router.lib.core.Router;
 public class ResourcesHelper {
     private Class<? extends Router> clz;
     private Context context;
+    private Resources resources;
 
     public ResourcesHelper(Context context, Class clz) {
         this.context = context;
         this.clz = clz;
-    }
-
-    public Resources getResources(Activity activity, Class clz) {
-        return ResourcesCore.getResources(activity,clz);
+        resources = ResourcesCore.getResources(context,clz);
     }
 
     public int getLayoutId(Context paramContext, String paramString) {
@@ -70,5 +67,9 @@ public class ResourcesHelper {
 
     public int[] getstyleableArray(Context paramContext, String paramString) {
         return ResourcesCore.getstyleableArray(paramContext,clz,paramString);
+    }
+
+    public Resources getResources() {
+        return resources;
     }
 }

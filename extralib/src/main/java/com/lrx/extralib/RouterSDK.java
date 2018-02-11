@@ -1,11 +1,17 @@
 package com.lrx.extralib;
 
+import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.os.Bundle;
 import android.os.Environment;
 
 import com.lrx.extralib.login.LoginRouter;
 import com.lrx.extralib.test.TestRouter;
+import com.lrx.router.lib.activitys.ActivityStub;
+import com.lrx.router.lib.core.PluginActivity;
 import com.lrx.router.lib.core.PluginResourceLoader;
 import com.lrx.router.lib.core.Router;
 import com.lrx.router.lib.core.RouterManager;
@@ -16,8 +22,8 @@ import com.lrx.router.lib.interfaces.RegisterPluginCallback;
  */
 
 public class RouterSDK {
-    public static void init(Context context) {
-        RouterManager.getInstance().init(context);
+    public static void init(Application application) {
+        RouterManager.getInstance().init(application);
     }
 
 
@@ -59,5 +65,14 @@ public class RouterSDK {
     public static Resources getPluginResources(Class<Router> clz) {
         return PluginResourceLoader.getInstance().getResources(PluginResourceLoader.getInstance()
                 .getPluginApkPackageName(RouterManager.getInstance().getRouter(clz).getPluginDexPath()));
+    }
+
+    public static void startActivity(Activity activity, Class<? extends PluginActivity> clz, Bundle bundle,Class<? extends Router> routerClz) {
+        RouterManager.getInstance().startActivity(activity,clz,bundle,routerClz);
+    }
+
+    public static void startActivity(Activity activity, Class<? extends ActivityStub> stubClz
+            ,Class<? extends PluginActivity> clz, Bundle bundle, Class<? extends Router> routerClz) {
+        RouterManager.getInstance().startActivity(activity, stubClz,clz, bundle, routerClz);
     }
 }

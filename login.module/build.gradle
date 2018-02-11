@@ -51,5 +51,10 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.1'
 //    compile project(':extralib')
 //    compile files('libs/extra_1.0.0.jar')
-    provided files('libs/extra_1.0.0.jar')
+//    provided files('libs/extra_1.0.0.jar')
+//    provided files('libs/router_1.0.0.jar')
+
+    compile 'com.github.bumptech.glide:glide:4.3.1'
+    provided files('../extralib/release/extra_1.0.0.jar')
+    provided files('../Routerlib/release/router_1.0.0.jar')
 }

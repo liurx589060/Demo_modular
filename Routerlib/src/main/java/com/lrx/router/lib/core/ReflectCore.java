@@ -1,8 +1,12 @@
 package com.lrx.router.lib.core;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 
+import com.lrx.router.lib.activitys.ActivityStub;
 import com.lrx.router.lib.interfaces.NativeDexCallback;
 import com.lrx.router.lib.interfaces.RegisterPluginCallback;
 import com.lrx.router.lib.utils.ConstantUtil;
@@ -40,22 +44,22 @@ public class ReflectCore {
     /**
      * maybe need to copy file ,so must use asynchronous thread for return the result by callback
      * @param context
-     * @param dexFilePath
-     * @param impClassName
+     * @param router
      * @return
      */
-    public static void createNativeDex(final Context context, final String dexFilePath, final String impClassName, final NativeDexCallback callback) {
+    public static void createNativeDex(final Context context, final Router router, final NativeDexCallback callback) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                final String dexPath = copyDexToFilefromDexPath(context,dexFilePath);
+                final String dexPath = copyDexToFilefromDexPath(context,router.getPluginDexPath());
                 if(dexPath == null || !new File(dexPath).exists()) {
-                    LogUtil.i("con't find the dex form the dexFilePath--" + dexFilePath);
+                    LogUtil.i("con't find the dex form the dexFilePath--" + router.getPluginDexPath());
                     if(callback != null) {
                         new Handler(context.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
-                                callback.onResult(null,dexPath,impClassName, ConstantUtil.ERROR_PLUGIN_DEXPATH_INVALID,"con't find the dex---" + dexFilePath);
+                                callback.onResult(null,dexPath,router.getImpClassName()
+                                        , ConstantUtil.ERROR_PLUGIN_DEXPATH_INVALID,"con't find the dex---" + router.getPluginDexPath());
                             }
                         });
                     }
@@ -69,21 +73,22 @@ public class ReflectCore {
                 LogUtil.i("dexPath: " + dexPath + "\n" +
                         "dexOutputDir: " + dexOutputDir + "\n" +
                         "libPath: " + libPath + "\n" +
-                        "impClass: " + impClassName);
+                        "impClass: " + router.getImpClassName());
+                RouterManager.getInstance().getClassLoaderMap().put(router.getClass(),dcLoader);
 
                 try {
-                    Class clz = dcLoader.loadClass(impClassName);
-                    LogUtil.i(impClassName + "--find this class and load the class");
+                    Class clz = dcLoader.loadClass(router.getImpClassName());
+                    LogUtil.i(router.getImpClassName() + "--find this class and load the class");
                     final Object result = clz.newInstance();
                     //create unInstall apk resource
                     if(dexPath.endsWith("apk")) {
-                        PluginResourceLoader.getInstance().createAssetManager(context,dexPath,dexFilePath);
+                        PluginResourceLoader.getInstance().createAssetManager(context,dexPath,router.getPluginDexPath());
                     }
                     if(callback != null) {
                         new Handler(context.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
-                                callback.onResult(result,dexPath,impClassName,ConstantUtil.SUCCESS,"success");
+                                callback.onResult(result,dexPath,router.getImpClassName(),ConstantUtil.SUCCESS,"success");
                             }
                         });
                     }
@@ -94,7 +99,7 @@ public class ReflectCore {
                         new Handler(context.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
-                                callback.onResult(null,dexPath,impClassName,ConstantUtil.ERROR_PLUGIN_CLASS_CANNOT_FIND,e1.toString());
+                                callback.onResult(null,dexPath,router.getImpClassName(),ConstantUtil.ERROR_PLUGIN_CLASS_CANNOT_FIND,e1.toString());
                             }
                         });
                     }
@@ -105,7 +110,7 @@ public class ReflectCore {
                         new Handler(context.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
-                                callback.onResult(null,dexPath,impClassName,ConstantUtil.ERROR_UNKOWN,e.toString());
+                                callback.onResult(null,dexPath,router.getImpClassName(),ConstantUtil.ERROR_UNKOWN,e.toString());
                             }
                         });
                     }
@@ -271,10 +276,61 @@ public class ReflectCore {
             }else if (method.getName().equals("createPluginDexProxy")) {
                 method.invoke(router,registerPluginCallback);
             }
-            RouterManager.getInstance().getRouterMap().put(router.getClass().getName(),router);
+            RouterManager.getInstance().getRouterMap().put(router.getClass(),router);
         }catch (Exception e) {
             e.printStackTrace();
             throw new RouterException(e.toString() + "---please use class extends Router");
+        }
+    }
+
+    /**
+     * start activity
+     * @param activity
+     * @param stubClz
+     * @param bundle
+     */
+    public static void startActivity(Activity activity, Class<? extends ActivityStub> stubClz, Bundle bundle) {
+        Intent intent = new Intent(activity,stubClz);
+        if(bundle != null) {
+            intent.putExtras(bundle);
+        }
+        activity.startActivity(intent);
+    }
+
+    /**
+     * invoke the ActivityStub private metho -- setPluginActivity
+     * @param activityStub
+     * @param clz
+     */
+    public static void invokeSetPluginActivity(ActivityStub activityStub,Class<? extends Activity> clz,Class<? extends Router> routerClz) {
+        try {
+            Class pClz = null;
+            if(isClassPresent(clz.getName())) {
+                pClz = Class.forName(clz.getName());
+            }else {
+                pClz = RouterManager.getInstance().getClassLoaderMap().get(routerClz).loadClass(clz.getName());
+            }
+            PluginActivity pluginActivity = (PluginActivity) pClz.newInstance();
+            Method method = findSetPluginActivityMethod(activityStub.getClass());
+            method.setAccessible(true);//设置不做安全检查，这样才能访问private属性
+            method.invoke(activityStub,pluginActivity);
+        } catch (Exception e) {
+            e.printStackTrace();
+            LogUtil.e(e.toString());
+            throw new RouterException("can't find method setPluginActivity,please check params");
+        }
+    }
+
+    private static Method findSetPluginActivityMethod(Class clz) {
+        if(clz.getName().equals("java.lang.Object")) {
+            throw new RouterException("can't find method setPluginActivity,please check params");
+        }
+        try {
+            Method method = clz.getDeclaredMethod("setPluginActivity",PluginActivity.class);
+            return method;
+        }catch (NoSuchMethodException e) {
+            LogUtil.e(e.toString());
+            return findSetPluginActivityMethod(clz.getSuperclass());
         }
     }
 }

@@ -39,14 +39,14 @@ public abstract class Router<T> {
             isCreatedSuccess = true;
             isLoadComplete = true;
         }
-        LogUtil.i("createProxy proxy class--" + proxy.getClass().getName() + "---" + isCreatedSuccess);
+        LogUtil.i("createProxy proxy class--" + getImpClassName() + "---" + isCreatedSuccess);
         loadType = LoadType.LOAD_LIB;
     }
 
     private void createPluginDexProxy(final RegisterPluginCallback registerPluginCallback) {
         if(RouterManager.getInstance().getContext() == null) return;
         if(pluginDexPath == null) throw new RouterException("please set the pluginDexPath");
-        ReflectCore.createNativeDex(RouterManager.getInstance().getContext(), pluginDexPath, getImpClassName(), new NativeDexCallback() {
+        ReflectCore.createNativeDex(RouterManager.getInstance().getContext(), this, new NativeDexCallback() {
             @Override
             public void onResult(Object clz, String dexPath, String className, int errorCode,String errorMsg) {
                 if(clz != null) {
