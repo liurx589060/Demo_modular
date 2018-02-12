@@ -72,7 +72,7 @@ public class PluginResourceLoader {
             Resources resources = new Resources(assetManager, superRes.getDisplayMetrics(),
                     superRes.getConfiguration());
             resourcesMap.put(pluginApkPackageName,resources);
-            LogUtil.d("yy","load the plugin apk resource--packageName=" + pluginApkPackageName);
+            LogUtil.i("load the plugin apk resource--packageName=" + pluginApkPackageName);
         } catch (Exception e) {
             e.printStackTrace();
             LogUtil.e(e.toString());
