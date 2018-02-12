@@ -48,76 +48,84 @@ public class ReflectCore {
      * @return
      */
     public static void createNativeDex(final Context context, final Router router, final NativeDexCallback callback) {
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                final String dexPath = copyDexToFilefromDexPath(context,router.getPluginDexPath());
-                if(dexPath == null || !new File(dexPath).exists()) {
-                    LogUtil.i("con't find the dex form the dexFilePath--" + router.getPluginDexPath());
-                    if(callback != null) {
-                        new Handler(context.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                callback.onResult(null,dexPath,router.getImpClassName()
-                                        , ConstantUtil.ERROR_PLUGIN_DEXPATH_INVALID,"con't find the dex---" + router.getPluginDexPath());
-                            }
-                        });
-                    }
-                    return;
+        if(router.isSync()) {
+            loadNativeDex(context,router,callback);
+        }else {
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    loadNativeDex(context,router,callback);
                 }
-                //由于dex文件是包含在apk或者jar文件中的,所以在加载class之前就需要先将dex文件解压出来，dexOutputDir为解压路径
-                String dexOutputDir = context.getDir("dex",Context.MODE_PRIVATE).getPath();
-                //目标类可能使用的c或者c++的库文件的存放路径
-                String libPath = context.getApplicationInfo().nativeLibraryDir;
-                DexClassLoader dcLoader = new DexClassLoader(dexPath,dexOutputDir,libPath,context.getClassLoader());
-                LogUtil.i("dexPath: " + dexPath + "\n" +
-                        "dexOutputDir: " + dexOutputDir + "\n" +
-                        "libPath: " + libPath + "\n" +
-                        "impClass: " + router.getImpClassName());
-                RouterManager.getInstance().getClassLoaderMap().put(router.getClass(),dcLoader);
+            };
+            new Thread(runnable).start();
+        }
+    }
 
-                try {
-                    Class clz = dcLoader.loadClass(router.getImpClassName());
-                    LogUtil.i(router.getImpClassName() + "--find this class and load the class");
-                    final Object result = clz.newInstance();
-                    //create unInstall apk resource
-                    if(dexPath.endsWith("apk")) {
-                        PluginResourceLoader.getInstance().createAssetManager(context,dexPath,router.getPluginDexPath());
+    private static void loadNativeDex(Context context, final Router router, final NativeDexCallback callback) {
+        final String dexPath = copyDexToFilefromDexPath(context,router.getPluginDexPath());
+        if(dexPath == null || !new File(dexPath).exists()) {
+            LogUtil.i("con't find the dex form the dexFilePath--" + router.getPluginDexPath());
+            if(callback != null) {
+                new Handler(context.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onResult(null,dexPath,router.getImpClassName()
+                                , ConstantUtil.ERROR_PLUGIN_DEXPATH_INVALID,"con't find the dex---" + router.getPluginDexPath());
                     }
-                    if(callback != null) {
-                        new Handler(context.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                callback.onResult(result,dexPath,router.getImpClassName(),ConstantUtil.SUCCESS,"success");
-                            }
-                        });
-                    }
-                }catch (final ClassNotFoundException e1) {
-                    e1.printStackTrace();
-                    LogUtil.e(e1.toString());
-                    if(callback != null) {
-                        new Handler(context.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                callback.onResult(null,dexPath,router.getImpClassName(),ConstantUtil.ERROR_PLUGIN_CLASS_CANNOT_FIND,e1.toString());
-                            }
-                        });
-                    }
-                }catch (final Exception e) {
-                    e.printStackTrace();
-                    LogUtil.e(e.toString());
-                    if(callback != null) {
-                        new Handler(context.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                callback.onResult(null,dexPath,router.getImpClassName(),ConstantUtil.ERROR_UNKOWN,e.toString());
-                            }
-                        });
-                    }
-                }
+                });
             }
-        };
-        new Thread(runnable).start();
+            return;
+        }
+        //由于dex文件是包含在apk或者jar文件中的,所以在加载class之前就需要先将dex文件解压出来，dexOutputDir为解压路径
+        String dexOutputDir = context.getDir("dex",Context.MODE_PRIVATE).getPath();
+        //目标类可能使用的c或者c++的库文件的存放路径
+        String libPath = context.getApplicationInfo().nativeLibraryDir;
+        DexClassLoader dcLoader = new DexClassLoader(dexPath,dexOutputDir,libPath,context.getClassLoader());
+        LogUtil.i("dexPath: " + dexPath + "\n" +
+                "dexOutputDir: " + dexOutputDir + "\n" +
+                "libPath: " + libPath + "\n" +
+                "impClass: " + router.getImpClassName());
+        RouterManager.getInstance().getClassLoaderMap().put(router.getClass(),dcLoader);
+
+        try {
+            Class clz = dcLoader.loadClass(router.getImpClassName());
+            LogUtil.i(router.getImpClassName() + "--find this class and load the class");
+            final Object result = clz.newInstance();
+            //create unInstall apk resource
+            if(dexPath.endsWith("apk")) {
+                PluginResourceLoader.getInstance().createAssetManager(context,dexPath,router.getPluginDexPath());
+            }
+            if(callback != null) {
+                new Handler(context.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onResult(result,dexPath,router.getImpClassName(),ConstantUtil.SUCCESS,"success");
+                    }
+                });
+            }
+        }catch (final ClassNotFoundException e1) {
+            e1.printStackTrace();
+            LogUtil.e(e1.toString());
+            if(callback != null) {
+                new Handler(context.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onResult(null,dexPath,router.getImpClassName(),ConstantUtil.ERROR_PLUGIN_CLASS_CANNOT_FIND,e1.toString());
+                    }
+                });
+            }
+        }catch (final Exception e) {
+            e.printStackTrace();
+            LogUtil.e(e.toString());
+            if(callback != null) {
+                new Handler(context.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onResult(null,dexPath,router.getImpClassName(),ConstantUtil.ERROR_UNKOWN,e.toString());
+                    }
+                });
+            }
+        }
     }
 
     private static String toCopyFile(InputStream inputStream,File file) throws IOException {
