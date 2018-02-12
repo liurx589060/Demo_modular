@@ -18,12 +18,21 @@ public abstract class Router<T> {
     private boolean isConvertNull;
     private String pluginDexPath;
     private LoadType loadType = LoadType.LOAD_LIB;
+    private boolean isSync = true;// is load the dex synchronize
 
     public abstract String getImpClassName();
     public abstract T getErrorProxyClass();
 
     public LoadType getLoadType() {
         return loadType;
+    }
+
+    public boolean isSync() {
+        return isSync;
+    }
+
+    public void setSync(boolean sync) {
+        isSync = sync;
     }
 
     public enum LoadType {
