@@ -151,20 +151,19 @@ public class ReflectCore {
                     return null;
                 }
                 File file = new File(context.getApplicationInfo().dataDir + File.separator + filename);
-                LogUtil.d("yy",file.getPath());
+                LogUtil.i("filePath--" + file.getPath());
                 if (file.exists()) {
                     return file.getPath();
                 }
                 if(!file.getParentFile().exists()) {
-                    //create parent dir
+                    //create parent diri
                     file.getParentFile().mkdirs();
                 }
-                LogUtil.d("copyDexToFilefromAssert--" + filename);
+                LogUtil.i("copyDexToFilefromAssert--" + filename);
                 return toCopyFile(context.getAssets().open(filename),file);
             }else {
                 File originFile = new File(dexPath);
                 File desFile = new File(context.getApplicationInfo().dataDir + File.separator + "sdcard" + File.separator + originFile.getName());
-                LogUtil.d("yy",desFile.getPath());
                 if (desFile.exists()) {
                     return desFile.getPath();
                 }
@@ -175,7 +174,7 @@ public class ReflectCore {
                     //create parent dir
                     desFile.getParentFile().mkdirs();
                 }
-                LogUtil.d("copyDexToFilefromSDcard--" + desFile.getPath());
+                LogUtil.i("copyDexToFilefromSDcard--" + desFile.getPath());
                 InputStream inputStream = new FileInputStream(originFile);
                 return toCopyFile(inputStream,desFile);
             }
