@@ -8,7 +8,11 @@ import android.util.Log;
 
 public class LogUtil {
     public final static String TAG = "routerLib";
-    public static boolean isDebug = true;
+    private static boolean isDebug = true;
+
+    public static void setIsDebug(boolean debug) {
+        isDebug = debug;
+    }
 
     public static void e(String msg) {
         e(TAG,msg);

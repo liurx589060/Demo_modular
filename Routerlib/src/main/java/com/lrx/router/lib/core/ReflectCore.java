@@ -10,6 +10,7 @@ import com.lrx.router.lib.activitys.ActivityStub;
 import com.lrx.router.lib.interfaces.NativeDexCallback;
 import com.lrx.router.lib.interfaces.RegisterPluginCallback;
 import com.lrx.router.lib.utils.ConstantUtil;
+import com.lrx.router.lib.utils.ErrorCode;
 import com.lrx.router.lib.utils.LogUtil;
 
 import java.io.File;
@@ -70,7 +71,7 @@ public class ReflectCore {
                     @Override
                     public void run() {
                         callback.onResult(null,dexPath,router.getImpClassName()
-                                , ConstantUtil.ERROR_PLUGIN_DEXPATH_INVALID,"con't find the dex---" + router.getPluginDexPath());
+                                , ErrorCode.ERROR_PLUGIN_DEXPATH_INVALID,"con't find the dex---" + router.getPluginDexPath());
                     }
                 });
             }
@@ -99,7 +100,7 @@ public class ReflectCore {
                 new Handler(context.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        callback.onResult(result,dexPath,router.getImpClassName(),ConstantUtil.SUCCESS,"success");
+                        callback.onResult(result,dexPath,router.getImpClassName(),ErrorCode.SUCCESS,"success");
                     }
                 });
             }
@@ -110,7 +111,7 @@ public class ReflectCore {
                 new Handler(context.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        callback.onResult(null,dexPath,router.getImpClassName(),ConstantUtil.ERROR_PLUGIN_CLASS_CANNOT_FIND,e1.toString());
+                        callback.onResult(null,dexPath,router.getImpClassName(),ErrorCode.ERROR_PLUGIN_CLASS_CANNOT_FIND,e1.toString());
                     }
                 });
             }
@@ -121,7 +122,7 @@ public class ReflectCore {
                 new Handler(context.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        callback.onResult(null,dexPath,router.getImpClassName(),ConstantUtil.ERROR_UNKOWN,e.toString());
+                        callback.onResult(null,dexPath,router.getImpClassName(),ErrorCode.ERROR_UNKOWN,e.toString());
                     }
                 });
             }
