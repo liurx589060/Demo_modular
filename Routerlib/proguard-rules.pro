@@ -83,3 +83,9 @@
 -keep class com.lrx.router.lib.core.RouterManager {
     public <methods>;
 }
+
+
+
+#app混淆代码
+-keep class * extends com.lrx.router.lib.core.PluginActivity {*;}
+#作为接口类的不能混淆 （getImpClassName()方法内指明的类名）
