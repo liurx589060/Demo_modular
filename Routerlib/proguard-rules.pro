@@ -79,14 +79,6 @@
     private void createProxy();
     private void createPluginDexProxy(com.lrx.router.lib.interfaces.RegisterPluginCallback);
 }
-#-keep class com.lrx.router.lib.core.RouterManager {
-#    public void init(android.app.Application);
-#    public *** get*();
-#    public *** is*();
-#    public static <methods>;
-#    public boolean registerRouter(com.lrx.router.lib.core.Router,boolean);
-#    public boolean registerRouterByPlugin(com.lrx.router.lib.core.Router,boolean,com.lrx.router.lib.interfaces.RegisterPluginCallback);
-#}
 
 -keep class com.lrx.router.lib.core.RouterManager {
     public <methods>;

@@ -36,12 +36,6 @@ task deleteOldJar(type: Delete) {
 
 //task to export contents as jar
 task exportJar(type: Jar) {
-//    from('build/intermediates/bundles/default/')
-//    into("${sdkDestinationPath}")
-//    include('classes.jar')
-//    ///Rename the jar
-//    rename('classes.jar', "${SDK_BASENAME}_${SDK_VERSION}.jar")
-
     from zipTree(zipFile)
     from zipTree(zipFile2)
     baseName = SDK_BASENAME + "_" + SDK_VERSION
