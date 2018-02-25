@@ -9,7 +9,6 @@ import android.os.Handler;
 import com.lrx.router.lib.activitys.ActivityStub;
 import com.lrx.router.lib.interfaces.NativeDexCallback;
 import com.lrx.router.lib.interfaces.RegisterPluginCallback;
-import com.lrx.router.lib.utils.ConstantUtil;
 import com.lrx.router.lib.utils.ErrorCode;
 import com.lrx.router.lib.utils.LogUtil;
 
@@ -27,6 +26,7 @@ import dalvik.system.DexClassLoader;
  */
 
 public class ReflectCore {
+    public static String exceptionMes = "somewhere throws exception";
     /**
      * check the class can find or not
      * @param name
@@ -269,7 +269,8 @@ public class ReflectCore {
             }catch (NoSuchMethodException e) {
                 return findMethod(clz.getSuperclass(),methodName);
             }catch (Exception e1) {
-                throw new RouterException("registerRouter fail,please check register router class,must use class extends Router");
+                throw new RouterException(e1.toString()
+                        + "--registerRouter fail,please check register router class,must use class extends Router");
             }
         }else {
             throw new RouterException("registerRouter the routerKey is null,please enter valid key");
@@ -287,7 +288,7 @@ public class ReflectCore {
             RouterManager.getInstance().getRouterMap().put(router.getClass(),router);
         }catch (Exception e) {
             e.printStackTrace();
-            throw new RouterException(e.toString() + "---please use class extends Router");
+            throw new RouterException(e.toString() + "--" + exceptionMes + "\n"  + "---please use class extends Router");
         }
     }
 
@@ -325,7 +326,7 @@ public class ReflectCore {
         } catch (Exception e) {
             e.printStackTrace();
             LogUtil.e(e.toString());
-            throw new RouterException("can't find method setPluginActivity,please check params");
+            throw new RouterException(e.toString() + "--" + exceptionMes + "\n" + "---can't find method setPluginActivity,please check params");
         }
     }
 

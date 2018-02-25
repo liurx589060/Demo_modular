@@ -8,6 +8,9 @@ import android.view.KeyEvent;
 import android.view.View;
 
 import com.lrx.router.lib.core.PluginActivity;
+import com.lrx.router.lib.core.ReflectCore;
+import com.lrx.router.lib.core.RouterException;
+import com.lrx.router.lib.utils.LogUtil;
 
 /**
  * Created by Administrator on 2018/2/10.
@@ -18,10 +21,17 @@ public class ActivityStub extends Activity {
     private Bundle savedInstanceState;
 
     private void setPluginActivity(PluginActivity pluginActivity) {
-        this.pluginActivity = pluginActivity;
-        pluginActivity.setIntent(this.getIntent());
-        pluginActivity.onPCreate(this,savedInstanceState);
-        setContentView(pluginActivity.getContentView());
+        try {
+            this.pluginActivity = pluginActivity;
+            pluginActivity.setIntent(this.getIntent());
+            pluginActivity.onPCreate(this,savedInstanceState);
+            setContentView(pluginActivity.getContentView());
+        }catch (Exception e) {
+            String msg = "setPluginActivity--" + e.toString();
+            LogUtil.e(msg);
+            ReflectCore.exceptionMes = msg;
+            throw new RouterException(msg);
+        }
     }
 
     @Override

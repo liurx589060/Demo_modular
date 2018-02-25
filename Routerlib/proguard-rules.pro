@@ -67,6 +67,7 @@
 
 -keep class com.lrx.router.lib.interfaces.** {*;}
 -keep class com.lrx.router.lib.helper.ResourcesHelper {*;}
+-keep class com.lrx.router.lib.core.RouterException {*;}
 -keep class com.lrx.router.lib.utils.LogUtil {*;}
 -keep class com.lrx.router.lib.utils.ErrorCode {*;}
 -keep class com.lrx.router.lib.core.Router$LoadType {*;}

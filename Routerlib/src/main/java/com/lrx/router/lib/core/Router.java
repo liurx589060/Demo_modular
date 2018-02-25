@@ -43,36 +43,50 @@ public abstract class Router<T> {
      * 创建proxy
      */
     private void createProxy() {
-        proxy = (T) ReflectCore.create(getImpClassName());
-        if(proxy != null) {
-            isCreatedSuccess = true;
-            isLoadComplete = true;
+        try {
+            proxy = (T) ReflectCore.create(getImpClassName());
+            if(proxy != null) {
+                isCreatedSuccess = true;
+                isLoadComplete = true;
+            }
+            LogUtil.i("createProxy proxy class--" + getImpClassName() + "---" + isCreatedSuccess);
+            loadType = LoadType.LOAD_LIB;
+        }catch (Exception e) {
+            String msg = "createProxy--" + e.toString();
+            LogUtil.e(msg);
+            ReflectCore.exceptionMes = msg;
+            throw new RouterException(msg);
         }
-        LogUtil.i("createProxy proxy class--" + getImpClassName() + "---" + isCreatedSuccess);
-        loadType = LoadType.LOAD_LIB;
     }
 
     private void createPluginDexProxy(final RegisterPluginCallback registerPluginCallback) {
-        if(RouterManager.getInstance().getContext() == null) return;
-        if(pluginDexPath == null) throw new RouterException("please set the pluginDexPath");
-        ReflectCore.createNativeDex(RouterManager.getInstance().getContext(), this, new NativeDexCallback() {
-            @Override
-            public void onResult(Object clz, String dexPath, String className, int errorCode,String errorMsg) {
-                if(clz != null) {
-                    proxy = (T) clz;
-                    isCreatedSuccess = true;
-                    isLoadComplete = true;
-                    LogUtil.i("createPluginDexProxy class--" + proxy.getClass().getName());
-                }else {
-                    proxy = null;
+        try {
+            if(RouterManager.getInstance().getContext() == null) return;
+            if(pluginDexPath == null) throw new RouterException("please set the pluginDexPath");
+            ReflectCore.createNativeDex(RouterManager.getInstance().getContext(), this, new NativeDexCallback() {
+                @Override
+                public void onResult(Object clz, String dexPath, String className, int errorCode,String errorMsg) {
+                    if(clz != null) {
+                        proxy = (T) clz;
+                        isCreatedSuccess = true;
+                        isLoadComplete = true;
+                        LogUtil.i("createPluginDexProxy class--" + proxy.getClass().getName());
+                    }else {
+                        proxy = null;
+                    }
+                    LogUtil.i("createPluginDexProxy--errorImp=" + isCreatedSuccess());
+                    if(registerPluginCallback != null) {
+                        registerPluginCallback.onResult(dexPath,className,errorCode,errorMsg);
+                    }
                 }
-                LogUtil.i("createPluginDexProxy--errorImp=" + isCreatedSuccess());
-                if(registerPluginCallback != null) {
-                    registerPluginCallback.onResult(dexPath,className,errorCode,errorMsg);
-                }
-            }
-        });
-        loadType = LoadType.LOAD_PLUGIN;
+            });
+            loadType = LoadType.LOAD_PLUGIN;
+        }catch (Exception e) {
+            String msg = "createPluginDexProxy--" + e.toString();
+            LogUtil.e(msg);
+            ReflectCore.exceptionMes = msg;
+            throw new RouterException(msg);
+        }
     }
 
     public T getProxy() {
