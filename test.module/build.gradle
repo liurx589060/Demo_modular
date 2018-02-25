@@ -20,5 +20,26 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':extralib')
+//    compile project(':extralib')
+    compile 'com.lrx.extra.lib:extra:1.0.0'
+}
+
+apply plugin: 'maven'
+def artifactId = "test"
+def groupId = "com.lrx.module"
+def SDK_VERSION = '1.0.0'
+//上传到maven
+uploadArchives {
+    repositories.mavenDeployer{
+        name='mavenCentralReleaseDeployer'
+        repository(url:"http://localhost:8081/nexus/content/repositories/lrxRepo/")
+                {
+                    authentication(userName:"sy01",password:"123456")
+                }
+        pom.version  = SDK_VERSION
+        pom.artifactId = artifactId
+        pom.groupId = groupId
+        pom.name = artifactId + "_lib"
+        pom.packaging = "aar"
+    }
 }
