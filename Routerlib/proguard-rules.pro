@@ -75,10 +75,13 @@
 -keep class com.lrx.router.lib.core.PluginActivity {*;}
 -keep class com.lrx.router.lib.core.Router {
     public *** get*();
+    protected *** get*();
     public *** is*();
     public void setPluginDexPath(***);
     public void setSync(boolean);
     public void setAvailable(boolean);
+    public void setImpClassName(java.lang.String);
+    public void setErrorProxy(***);
     private void createProxy();
     private void createPluginDexProxy(com.lrx.router.lib.interfaces.RegisterPluginCallback);
 }

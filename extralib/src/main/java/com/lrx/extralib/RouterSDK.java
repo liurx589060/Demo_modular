@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 
+import com.lrx.extralib.login.LoginApi;
 import com.lrx.extralib.login.LoginRouter;
 import com.lrx.extralib.test.TestRouter;
 import com.lrx.router.lib.activitys.ActivityStub;

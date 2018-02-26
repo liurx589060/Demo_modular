@@ -49,9 +49,9 @@ android {
 dependencies {
 //    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:25.3.1'
-//    compile project(':extralib')
+    compile project(':extralib')
 
-    compile 'com.lrx.extra.lib:extra:1.0.0'
+//    compile 'com.lrx.extra.lib:extra:1.0.0'
     compile 'com.github.bumptech.glide:glide:4.3.1'
 //    provided files('../extralib/release/extra_1.0.0.jar')
 }

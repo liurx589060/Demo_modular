@@ -8,12 +8,12 @@ import com.lrx.router.lib.core.Router;
 
 public class TestRouter extends Router<TestApi> {
     @Override
-    public String getImpClassName() {
+    protected String getDefaultImpClassName() {
         return "com.lrx.extratestlib.ExtraImpApi";
     }
 
     @Override
-    public TestApi getErrorProxyClass() {
+    protected TestApi getErrorProxyClass() {
         return new ErrorImpTestApi();
     }
 }

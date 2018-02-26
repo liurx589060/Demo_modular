@@ -10,12 +10,12 @@ public class LoginRouter extends Router<LoginApi> {
     private final String className = "com.lrx.loginlib.LoginApiImp";
 
     @Override
-    public String getImpClassName() {
+    protected String getDefaultImpClassName() {
         return className;
     }
 
     @Override
-    public LoginApi getErrorProxyClass() {
+    protected LoginApi getErrorProxyClass() {
         return new ErrorImpLoginApi();
     }
 }

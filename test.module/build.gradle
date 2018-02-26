@@ -20,8 +20,8 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-//    compile project(':extralib')
-    compile 'com.lrx.extra.lib:extra:1.0.0'
+    compile project(':extralib')
+//    compile 'com.lrx.extra.lib:extra:1.0.0'
 }
 
 apply plugin: 'maven'

@@ -14,14 +14,15 @@ public abstract class Router<T> {
     private boolean isLoadComplete;
     private T proxy;
     private T errorProxy;
-    private boolean isAvailable = true;
+    private boolean isAvailable = false; //当为false时则调用error或者直接返回null
     private boolean isConvertNull;
     private String pluginDexPath;
+    private String impClassName;
     private LoadType loadType = LoadType.LOAD_LIB;
     private boolean isSync = true;// is load the dex synchronize
 
-    public abstract String getImpClassName();
-    public abstract T getErrorProxyClass();
+    protected abstract String getDefaultImpClassName();
+    protected abstract T getErrorProxyClass();
 
     public LoadType getLoadType() {
         return loadType;
@@ -35,6 +36,14 @@ public abstract class Router<T> {
         isSync = sync;
     }
 
+    public String getImpClassName() {
+        return impClassName==null?getDefaultImpClassName():impClassName;
+    }
+
+    public void setImpClassName(String impClassName) {
+        this.impClassName = impClassName;
+    }
+
     public enum LoadType {
         LOAD_LIB,LOAD_PLUGIN
     }
@@ -44,12 +53,14 @@ public abstract class Router<T> {
      */
     private void createProxy() {
         try {
-            proxy = (T) ReflectCore.create(getImpClassName());
+            String impName = impClassName==null?getImpClassName():impClassName;
+            proxy = (T) ReflectCore.create(impName);
             if(proxy != null) {
                 isCreatedSuccess = true;
                 isLoadComplete = true;
+                isAvailable = true;
             }
-            LogUtil.i("createProxy proxy class--" + getImpClassName() + "---" + isCreatedSuccess);
+            LogUtil.i("createProxy proxy class--" + impName + "---" + isCreatedSuccess);
             loadType = LoadType.LOAD_LIB;
         }catch (Exception e) {
             String msg = "createProxy--" + e.toString();
@@ -70,6 +81,7 @@ public abstract class Router<T> {
                         proxy = (T) clz;
                         isCreatedSuccess = true;
                         isLoadComplete = true;
+                        isAvailable = true;
                         LogUtil.i("createPluginDexProxy class--" + proxy.getClass().getName());
                     }else {
                         proxy = null;
@@ -140,5 +152,9 @@ public abstract class Router<T> {
 
     public void setPluginDexPath(String pluginDexPath) {
         this.pluginDexPath = pluginDexPath;
+    }
+
+    public void setErrorProxy(T errorProxy) {
+        this.errorProxy = errorProxy;
     }
 }

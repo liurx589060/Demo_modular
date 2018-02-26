@@ -51,10 +51,10 @@ dependencies {
 //        }
 //    }
 
-//    compile project(':extralib')
-//    compile project(':test.module')
-    compile 'com.lrx.extra.lib:extra:1.0.0'
-    compile 'com.lrx.module:login:1.0.1'
-    compile 'com.lrx.module:test:1.0.0'
+    compile project(':extralib')
+    compile project(':test.module')
+//    compile 'com.lrx.extra.lib:extra:1.0.0'
+//    compile 'com.lrx.module:login:1.0.1'
+//    compile 'com.lrx.module:test:1.0.0'
     compile 'com.github.bumptech.glide:glide:4.3.1'
 }

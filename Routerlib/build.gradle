@@ -33,11 +33,11 @@ dependencies {
 }
 
 def SDK_BASENAME = "router"
-def SDK_VERSION = "1.0.0"
+def SDK_VERSION = "1.1.0"
 def sdkDestinationPath = "./release"
 
 def artifactId = "router"
-def groupId = "com.lrx.router.lib"
+def groupId = "com.qianqi.router.lib"
 
 //task to delete the old jar
 task deleteOldJar(type: Delete) {
@@ -59,9 +59,9 @@ exportJar.dependsOn(deleteOldJar, build)
 uploadArchives {
     repositories.mavenDeployer{
         name='mavenCentralReleaseDeployer'
-        repository(url:"http://localhost:8081/nexus/content/repositories/lrxRepo/")
+        repository(url:"http://localhost:8081/nexus/content/repositories/Qianqi/")
                 {
-                    authentication(userName:"sy01",password:"123456")
+                    authentication(userName:"qianqi",password:"xiaoyao")
                 }
         pom.version  = SDK_VERSION
         pom.artifactId = artifactId
