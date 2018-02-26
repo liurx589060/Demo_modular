@@ -77,6 +77,8 @@
     public *** get*();
     public *** is*();
     public void setPluginDexPath(***);
+    public void setSync(boolean);
+    public void setAvailable(boolean);
     private void createProxy();
     private void createPluginDexProxy(com.lrx.router.lib.interfaces.RegisterPluginCallback);
 }
