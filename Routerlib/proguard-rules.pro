@@ -94,4 +94,5 @@
 
 #app混淆代码
 -keep class * extends com.lrx.router.lib.core.PluginActivity {*;}
+-keep class * extends com.lrx.router.lib.activitys.ActivityStub {*;}
 #作为接口类的不能混淆 （getImpClassName()方法内指明的类名）
